@@ -47,6 +47,10 @@
   <ItemGroup>
      <Compile Include="Assets\scripts\EmptySpace.cs" />
      <Compile Include="Assets\scripts\GameManager.cs" />
+     <Compile Include="Assets\scripts\MenuManager.cs" />
+     <Compile Include="Assets\scripts\PagingManager.cs" />
+     <Compile Include="Assets\scripts\PagingTile.cs" />
+     <Compile Include="Assets\scripts\fadeout.cs" />
      <None Include="Assets\Standard Assets\CrossPlatformInput\CrossPlatformInputGuidelines.txt" />
      <None Include="Assets\Standard Assets\Characters\ThirdPersonCharacter\ThirdPersonCharacterGuidelines.txt" />
      <None Include="Assets\Standard Assets\Characters\FirstPersonCharacter\FirstPersonCharacterGuidelines.txt" />

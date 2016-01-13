@@ -8,20 +8,23 @@ public class GameManager : MonoBehaviour {
 	public GameObject spawn, rightFreeSpace;
 	public GameObject []EmptySpaces;
 	public GameObject[]newProcesses;
-//	public List<GameObject> EmptySpaces;
 	public GameObject [] arrangedEmptySpaces;
 	enum GameType {MEMORYALLOCATION, PAGING};
-	public enum AllocationType {FIRSTFIT, NEXTFIT, BESTFIT, WORSEFIT}
+	public enum AllocationType {FIRSTFIT, BESTFIT, WORSEFIT}
 	public enum State {GENERATE, WAIT, ASSES, FINALSCORE};
 	GameType gameType;
-	public AllocationType allocType;
+	public static AllocationType allocType;
 	public State currentSate;
 	bool gameOver, lastProcess;
 
-	public int numberOfNewProcesses, currentProcessNum;
-	public GameObject currentProcessToAllocate;
+	public GameObject WrongWord;
 
-	public float Score = 100;
+	public int numberOfNewProcesses, currentProcessNum;
+	public GameObject currentProcessToAllocate, finalScore;
+
+	public float Score = 100, time;
+	public Text scoreText, final, timeText;
+	public Dropdown drop;
 	RaycastHit hit;
 
 	void Start () {
@@ -30,9 +33,24 @@ public class GameManager : MonoBehaviour {
 			arrangedEmptySpaces[i] = EmptySpaces[i];
 		numberOfNewProcesses = newProcesses.Length;
 
+		RandomizeNewProcesses ();
+		drop.value = (int)allocType;
+		time = Time.time;
+		Debug.Log ("time "+time);
 
 	}
 
+	public void RandomizeNewProcesses()
+	{
+		for (int i = newProcesses.Length-1; i>0; --i)
+		{
+			int num = Random.Range(0, i);
+			GameObject tempProcess = newProcesses[i];
+			newProcesses[i] = newProcesses[num];
+			newProcesses[num] = tempProcess;
+		}
+		Debug.Log (allocType);
+	}
 
 	void Update () {
 	
@@ -45,21 +63,33 @@ public class GameManager : MonoBehaviour {
 
 						if(hit.collider.gameObject == rightFreeSpace)
 						{
-							Debug.Log("Same" + rightFreeSpace.transform.localScale.y);
+//							Debug.Log("Same" + rightFreeSpace.transform.localScale.y);
 							currentProcessToAllocate.transform.position = rightFreeSpace.GetComponent<EmptySpace> ().positionOfNewProcess.position;
 							Vector3 newVector =  rightFreeSpace.transform.localScale;
 							float newFreeSpaceamount = rightFreeSpace.transform.localScale.y - currentProcessToAllocate .transform.localScale.y;
 							newVector.y = newFreeSpaceamount; 
 							rightFreeSpace.transform.localScale = newVector;
 							rightFreeSpace.GetComponent<EmptySpace>().UpdateText();
+		
+							ArrangeEmptySpaces();
 
-
-							if (lastProcess)
+							if (lastProcess){
+								time = Time.time;
 								currentSate = State.FINALSCORE;
-							else 
+							}else {
 								currentSate = State.GENERATE;
 
+							}
+
 						}else if(hit.collider.gameObject != rightFreeSpace){
+							Debug.Log("wrong space");
+							WrongWord.SetActive(true);
+//							currentProcessToAllocate = GameObject.Instantiate (WrongWord,
+//							                                                   WrongWord.transform.position,
+//							                                                   WrongWord.transform.rotation) as GameObject;
+							Score -= 10;
+							scoreText.text = "Score: " + Score.ToString()+"%";
+
 							// Wrong get less score
 						}
 					}
@@ -76,7 +106,7 @@ public class GameManager : MonoBehaviour {
 
 
 			currentProcessNum++;
-			if (currentProcessNum == newProcesses.Length)
+			if (currentProcessNum == 4)
 				lastProcess = true;
 			Debug.Log(currentProcessToAllocate);
 			Debug.Log(currentProcessToAllocate.GetComponent<EmptySpace> ().valueSpace);
@@ -93,20 +123,32 @@ public class GameManager : MonoBehaviour {
 
 			break;
 		case State.FINALSCORE:
-		
+			finalScore.SetActive(true);
+			final.text = "Score: "+Score.ToString()+"%";
+
+			timeText.text = (System.Math.Round(time, 2)).ToString() + "sec";
 			break;
 		}
 	}
 
 	public void changeAllocType(int type)
 	{
-//		Debug.Log ("Ha: "+type);
 		allocType = (AllocationType)type;
 		if(allocType== AllocationType.BESTFIT || allocType == AllocationType.WORSEFIT)
 			ArrangeEmptySpaces ();
 		else if(allocType == AllocationType.FIRSTFIT)
 			for(int i =0; i < EmptySpaces.Length; ++i)
 				arrangedEmptySpaces[i] = EmptySpaces[i];
+
+		Destroy (currentProcessToAllocate);
+		currentSate = State.GENERATE;
+		RandomizeNewProcesses ();
+		currentProcessNum = 0;
+
+		Application.LoadLevel (Application.loadedLevel);
+//		finalScore.SetActive (false);
+//		Score = 100;
+
 	}
 
 	public void ArrangeEmptySpaces()
@@ -156,5 +198,15 @@ public class GameManager : MonoBehaviour {
 		}
 
 	}
+
+	public void replay()
+	{
+		Application.LoadLevel(Application.loadedLevel);
+	}
+	public void back()
+	{
+		Application.LoadLevel (0);
+	}
+
 
 }
