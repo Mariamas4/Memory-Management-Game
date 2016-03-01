@@ -7,8 +7,8 @@ public class GameManager : MonoBehaviour {
 
 	public GameObject spawn, rightFreeSpace;
 	public GameObject []EmptySpaces;
-	public GameObject[]newProcesses;
-	public GameObject [] arrangedEmptySpaces;
+	public GameObject []newProcesses;
+	public GameObject []arrangedEmptySpaces;
 	enum GameType {MEMORYALLOCATION, PAGING};
 	public enum AllocationType {FIRSTFIT, BESTFIT, WORSEFIT}
 	public enum State {GENERATE, WAIT, ASSES, FINALSCORE};
@@ -20,7 +20,7 @@ public class GameManager : MonoBehaviour {
 	public GameObject WrongWord;
 
 	public int numberOfNewProcesses, currentProcessNum;
-	public GameObject currentProcessToAllocate, finalScore;
+	public GameObject currentProcessToAllocate, finalScore, helpPanl;
 
 	public float Score = 100, time;
 	public Text scoreText, final, timeText;
@@ -207,6 +207,14 @@ public class GameManager : MonoBehaviour {
 	{
 		Application.LoadLevel (0);
 	}
+	public void help(){
+		if (helpPanl.activeSelf) {
+			helpPanl.SetActive(false);
+		}else{
+			helpPanl.SetActive(true);
+		}
+	}
+
 
 
 }
