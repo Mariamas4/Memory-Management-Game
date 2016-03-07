@@ -163,7 +163,8 @@ public class PagingManager : MonoBehaviour
 			finalScore.SetActive (true);
 			check = false;
 			final.text = "Score: " + Score.ToString () + "%";
-//			finalTime.text = (System.Math.Round (theTimeTaken, 2)).ToString () + "sec";
+			Debug.Log(theTimeTaken +" taken");
+			finalTime.text = (System.Math.Round (theTimeTaken, 2)).ToString () + "sec";
 			break;
 		}
 	}
